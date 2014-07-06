@@ -58,7 +58,6 @@ encrypt(char *ppath, char *spath,
   if(err != 0) return err;
 
   randombytes(n, crypto_box_NONCEBYTES);
-  randombytes(n, crypto_box_NONCEBYTES);
   crypto_box_beforenm(k, pk, sk);
   crypto_stream_xor(secret + tweak, plain, size, n, k);
   memcpy(secret + crypto_secretbox_NONCEBYTES, n, crypto_secretbox_NONCEBYTES);
