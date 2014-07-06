@@ -3,8 +3,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-/* it's really stupid that there isn't a syscall for this */
-
 static int fd = -1;
 
 void randombytes(unsigned char *x,unsigned long long xlen)
@@ -13,7 +11,7 @@ void randombytes(unsigned char *x,unsigned long long xlen)
 
   if (fd == -1) {
     for (;;) {
-      fd = open("/dev/urandom",O_RDONLY);
+      fd = open("/dev/urandom", O_RDONLY);
       if (fd != -1) break;
       sleep(1);
     }
