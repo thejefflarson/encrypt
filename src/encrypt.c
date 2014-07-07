@@ -61,7 +61,7 @@ encrypt(char *ppath, char *spath,
   crypto_box_beforenm(k, pk, sk);
   crypto_stream_xor(secret + tweak, plain, size, n, k);
   memcpy(secret, n, crypto_secretbox_NONCEBYTES);
-  crypto_onetimeauth(secret, secret + tweak, size, k);
+  crypto_onetimeauth(secret + crypto_secretbox_NONCEBYTES, secret + tweak, size, k);
   memset(k, 0, crypto_box_BEFORENMBYTES);
   close_pair(plain, secret, size, tweak);
   return 0;
