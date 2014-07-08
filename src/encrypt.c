@@ -6,6 +6,7 @@
 
 #include "randombytes.h"
 #include "tweetnacl.h"
+#include "encrypt.h"
 
 static const int padding = crypto_secretbox_NONCEBYTES + crypto_onetimeauth_BYTES;
 
