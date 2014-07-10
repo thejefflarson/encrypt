@@ -21,17 +21,17 @@ map_pair(const char *ppath, char const *spath,
   size_t csize;
   err = stat(ppath, &st);
   if(err != 0) return err;
-  if(S_ISREG(st.st_mode)) return 1;
+  if(!S_ISREG(st.st_mode)) return 1;
   *size = st.st_size;
 
   pid = open(ppath, O_RDONLY);
-  *text = (unsigned char *) mmap(NULL, *size, PROT_READ, MAP_ANON | MAP_SHARED, pid, 0);
+  *text = (unsigned char *) mmap(NULL, *size, PROT_READ, MAP_SHARED, pid, 0);
   if(*text == MAP_FAILED) err = 1;
 
   csize = *size + tweak;
-  sid = open(spath, O_WRONLY | O_CREAT);
+  sid = open(spath, O_RDWR | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
   err = ftruncate(sid, csize);
-  *create = (unsigned char *) mmap(NULL, csize, PROT_WRITE, MAP_ANON | MAP_SHARED, sid, 0);
+  *create = (unsigned char *) mmap(NULL, csize, PROT_READ | PROT_WRITE, MAP_SHARED, sid, 0);
   if(*create == MAP_FAILED) err = 1;
 
   close(sid);
@@ -47,7 +47,7 @@ close_pair(unsigned char *text, unsigned char *create, size_t size, int tweak){
 }
 
 int
-encrypt(const char *ppath, const char *spath,
+encryptf(const char *ppath, const char *spath,
         const unsigned char pk[crypto_box_PUBLICKEYBYTES],
         const unsigned char sk[crypto_box_SECRETKEYBYTES]){
   unsigned char *secret = NULL;
@@ -71,19 +71,19 @@ encrypt(const char *ppath, const char *spath,
 }
 
 int
-decrypt(const char *spath, const char *ppath,
-        const unsigned char pk[crypto_box_PUBLICKEYBYTES],
-        const unsigned char sk[crypto_box_SECRETKEYBYTES]) {
+decryptf(const char *spath, const char *ppath,
+         const unsigned char pk[crypto_box_PUBLICKEYBYTES],
+         const unsigned char sk[crypto_box_SECRETKEYBYTES]) {
   unsigned char *secret = NULL;
   unsigned char *plain  = NULL;
   unsigned char k[crypto_box_BEFORENMBYTES];
   size_t size;
 
-  int err = map_pair(ppath, spath, &secret, &plain, &size, -1 * padding);
+  int err = map_pair(spath, ppath, &secret, &plain, &size, -1 * padding);
   if(err != 0) return err;
 
   crypto_box_beforenm(k, pk, sk);
-  err = crypto_onetimeauth_verify(secret + crypto_secretbox_NONCEBYTES, secret + padding, size, k);
+  err = crypto_onetimeauth_verify(secret + crypto_secretbox_NONCEBYTES, secret + padding, size - padding, k);
   if(err == 0) {
     unsigned char n[crypto_box_NONCEBYTES];
     memcpy(n, secret, crypto_secretbox_NONCEBYTES);

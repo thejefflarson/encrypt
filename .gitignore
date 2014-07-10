@@ -1,23 +1,4 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
-
-# Libraries
-*.lib
-*.a
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
+.lock-waf_darwin_build
+.waf-*
+build
 *.out
-*.app
-*.i*86
-*.x86_64
-*.hex
