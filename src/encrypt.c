@@ -58,8 +58,8 @@ brainkey(unsigned char pk[crypto_box_PUBLICKEYBYTES],
   for(int i = 0; i < 10000; i++)
     crypto_hash(h, h, crypto_hash_BYTES);
 
-  crypto_scalarmult_base(pk, sk);
   memcpy(sk, h, crypto_box_SECRETKEYBYTES);
+  crypto_scalarmult_base(pk, sk);
   memset(h, 0, crypto_hash_BYTES);
 }
 
