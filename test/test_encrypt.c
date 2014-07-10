@@ -18,5 +18,11 @@ main(){
   if(err != 0) printf("%s\n", strerror(errno));
   ok(err == 0, "decrypted the file");
 
+  char *t = "hello";
+  brainkey(pk, sk, t, 5);
+
+  for(int i = 0; i < crypto_box_PUBLICKEYBYTES; i++)
+    printf("%x", (unsigned int)sk[i]);
+
   return 0;
 }

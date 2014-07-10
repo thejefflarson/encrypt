@@ -49,13 +49,13 @@ close_pair(unsigned char *text, unsigned char *create, size_t size, int tweak){
 void
 brainkey(unsigned char pk[crypto_box_PUBLICKEYBYTES],
          unsigned char sk[crypto_box_SECRETKEYBYTES],
-         const char key, const int klen){
+         const char *key, const int klen){
   unsigned char h[crypto_hash_BYTES];
-  crypto_hash(h, key, klen);
+  crypto_hash(h, (unsigned char *) key, klen);
 
-  // stretch the key a bit, we could go further, as this might just be a
+  // stretch the key a bit, we could go further, but this might just be a
   // cargocult anyhow
-  for(int i = 0; i < 1000; i++)
+  for(int i = 0; i < 10000; i++)
     crypto_hash(h, h, crypto_hash_BYTES);
 
   crypto_scalarmult_base(pk, sk);
