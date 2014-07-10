@@ -104,7 +104,7 @@ decryptf(const char *spath, const char *ppath,
   if(err == 0) {
     unsigned char n[crypto_box_NONCEBYTES];
     memcpy(n, secret, crypto_secretbox_NONCEBYTES);
-    crypto_stream_xor(plain, secret + padding, size - padding, n ,k);
+    crypto_stream_xor(plain, secret + padding, size - padding, n, k);
   }
 
   memset(k, 0, crypto_box_BEFORENMBYTES);
