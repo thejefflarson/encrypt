@@ -55,7 +55,7 @@ brainkey(unsigned char pk[crypto_box_PUBLICKEYBYTES],
 
   // stretch the key a bit, we could go further, but this might just be a
   // cargocult anyhow
-  for(int i = 0; i < 10000; i++)
+  for(int i = 0; i < 50000; i++)
     crypto_hash(h, h, crypto_hash_BYTES);
 
   memcpy(sk, h, crypto_box_SECRETKEYBYTES);
