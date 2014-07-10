@@ -46,6 +46,23 @@ close_pair(unsigned char *text, unsigned char *create, size_t size, int tweak){
   munmap(create, size + tweak);
 }
 
+void
+brainkey(unsigned char pk[crypto_box_PUBLICKEYBYTES],
+         unsigned char sk[crypto_box_SECRETKEYBYTES],
+         const char key, const int klen){
+  unsigned char h[crypto_hash_BYTES];
+  crypto_hash(h, key, klen);
+
+  // stretch the key a bit, we could go further, as this might just be a
+  // cargocult anyhow
+  for(int i = 0; i < 1000; i++)
+    crypto_hash(h, h, crypto_hash_BYTES);
+
+  crypto_scalarmult_base(pk, sk);
+  memcpy(sk, h, crypto_box_SECRETKEYBYTES);
+  memset(h, 0, crypto_hash_BYTES);
+}
+
 int
 encryptf(const char *ppath, const char *spath,
         const unsigned char pk[crypto_box_PUBLICKEYBYTES],
